@@ -1,0 +1,35 @@
+<html>
+	<body>
+		<canvas id="canvas" width="1366" height="768"/>
+		<script>
+			var images = {}
+			var indices = Array(36).fill().map((_, i) => i + 1)
+			indices.map(f => {
+				var image = new Image()
+				image.src = `${f}.svg`
+				images[f] = image
+			})
+			var canvas = document.getElementById('canvas')
+			var context = canvas.getContext('2d')
+
+			var iterater = (function(){
+				var index = 0
+				var array = indices.reduce((acc, f) => acc.concat(Array((f % 2 == 0 ? 2 : 3) * 3).fill(f)), []).map(i => +i)
+				return function(){
+					var image = images[array[index % array.length]]
+					index++
+					return image
+				}
+			})()
+			var animation = function(){
+				var scale = 0.8
+				var height = 1366
+				var width = 768
+				context.clearRect(0, 0, 1366, 768)
+				context.drawImage(iterater(), 500, 0, height, width, 0, 0, height * scale, width * scale)
+				requestAnimationFrame(animation)
+			}
+			requestAnimationFrame(animation)
+		</script>
+	</body>
+</html>
